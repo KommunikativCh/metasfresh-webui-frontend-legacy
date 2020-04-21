@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Moment from 'moment-timezone';
+import { stubObject } from 'lodash';
 
 import * as windowActions from '../../actions/WindowActions';
 import { getZoomIntoWindow } from '../../api';
@@ -33,6 +34,15 @@ class MasterWidget extends Component {
     edited: false,
     data: '',
   };
+
+  constructor(props){
+    super(props);
+
+    const { handleBackdropLock } = props;
+    const handleFocusFn = handleBackdropLock ? handleBackdropLock : stubObject;
+
+    this.handleFocusFn = handleFocusFn;
+  }
 
   componentDidMount() {
     const { data, widgetData, clearValue } = this.props;
@@ -256,22 +266,29 @@ class MasterWidget extends Component {
     onBlurWidget && onBlurWidget(fieldName);
   };
 
+  handleFocus = () => {
+    this.handleFocusFn(true);
+  };
+
+  handleBlur = () => {
+    this.handleFocusFn(false);
+  };
+
   /**
    * @method render
    * @summary ToDo: Describe the method.
    */
   render() {
-    const { handleBackdropLock, onClickOutside } = this.props;
+    const { onClickOutside } = this.props;
     const { updated, data } = this.state;
-    const handleFocusFn = handleBackdropLock ? handleBackdropLock : () => {};
 
     return (
       <RawWidget
         {...this.props}
         updated={updated}
         data={data}
-        handleFocus={() => handleFocusFn(true)}
-        handleBlur={() => handleFocusFn(false)}
+        handleFocus={this.handleFocus}
+        handleBlur={this.handleBlur}
         onClickOutside={onClickOutside}
         handlePatch={this.handlePatch}
         handleChange={this.handleChange}
