@@ -149,14 +149,6 @@ class Table extends Component {
           })
         );
       }
-    } else if (!disconnectFromState && !selectedEqual && selected.length) {
-      dispatch(
-        selectTableItems({
-          windowType: windowId,
-          viewId,
-          ids: selected,
-        })
-      );
     }
 
     if (prevProps.viewId !== viewId && rowData.get(`${tabId}`)) {
